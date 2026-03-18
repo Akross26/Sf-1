@@ -1,7 +1,12 @@
 package daysteps
 
 import (
+	"fmt"
+	"strconv"
+	"strings"
 	"time"
+
+	"github.com/Yandex-Practicum/tracker/internal/spentcalories"
 )
 
 const (
@@ -12,9 +17,44 @@ const (
 )
 
 func parsePackage(data string) (int, time.Duration, error) {
-	// TODO: реализовать функцию
-}
+	sl := strings.Split(data, ",")
 
+	if len(sl) != 2 {
+		return 0, 0, fmt.Errorf("Неверные вводные данные")
+	}
+
+	step, err := strconv.Atoi(sl[0])
+	if err != nil {
+		return 0, 0, err
+	}
+
+	if step <= 0 {
+		return 0, 0, fmt.Errorf("Неверное кол-во шагов")
+	}
+
+	t, err := time.ParseDuration(sl[1])
+	if err != nil {
+		return 0, 0, err
+	}
+
+	return step, t, nil
+}
 func DayActionInfo(data string, weight, height float64) string {
-	// TODO: реализовать функцию
+	step, t, err := parsePackage(data)
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+
+	if step <= 0 {
+		return ""
+	}
+
+	dist := float64(step) * stepLength
+	km := dist / mInKm
+	calories := spentcalories.WalkingSpentCalories(step, weight, height, t)
+
+	result := fmt.Sprintf("Кол-во шагов: %d.\nДистанция составила %.2f км.\nВы сожгли %.2f ккал.", step, km, calories)
+
+	return result
 }

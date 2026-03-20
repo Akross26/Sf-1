@@ -21,7 +21,7 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 	sl := strings.Split(data, ",")
 
 	if len(sl) != 3 {
-		return 0, "", 0, fmt.Errorf("wrong format")
+		return 0, "", 0, fmt.Errorf("Неверный формат")
 	}
 
 	step, err := strconv.Atoi(sl[0])
@@ -32,6 +32,14 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 	t, err := time.ParseDuration(sl[2])
 	if err != nil {
 		return 0, "", 0, err
+	}
+
+	if step <= 0 {
+		return 0, "", 0, fmt.Errorf("Неверное количество шагов")
+	}
+
+	if t <= 0 {
+		return 0, "", 0, fmt.Errorf("Неверная длительность")
 	}
 
 	activ := sl[1]
@@ -85,11 +93,11 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 		}
 
 	default:
-		return "", fmt.Errorf("Неизвестный тип тренировки")
+		return "", fmt.Errorf("неизвестный тип тренировки")
 	}
 
 	result := fmt.Sprintf(
-		"Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f",
+		"Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n",
 		activity,
 		duration.Hours(),
 		dist,
